@@ -1,83 +1,189 @@
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+//import androidx.compose.foundation.layout.FlowRowScopeInstance.weight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Computer
-import androidx.compose.material.icons.filled.Keyboard
-import androidx.compose.material.icons.filled.Mouse
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.hadiyarajesh.composetemplate.BarangLab
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 
-// Mapping nama ke icon opsional
-fun getIconForItem(nama: String): ImageVector {
-    return when {
-        nama.contains("Monitor", ignoreCase = true) -> Icons.Default.Computer
-        nama.contains("Keyboard", ignoreCase = true) -> Icons.Default.Keyboard
-        nama.contains("Mouse", ignoreCase = true) -> Icons.Default.Mouse
-        else -> Icons.Default.Computer
-    }
-}
 
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CekBarangLabScreen(
-    daftarBarang: List<BarangLab>
+fun CekBarangLabTableScreen(
+    daftarBarang: List<BarangLab>,
+    onEditClick: (BarangLab) -> Unit = {},
+    onDeleteClick: (BarangLab) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // Header
         Text(
-            text = "Cek Barang Lab Komputer",
-            style = MaterialTheme.typography.headlineSmall,
+            text = "Barang Lab Komputer",
+            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        // Tabel dalam Card
+        Card(
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
         ) {
-            items(daftarBarang) { barang ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                    elevation = CardDefaults.cardElevation(4.dp)
+            Column(modifier = Modifier.padding(8.dp)) {
+                // Header Tabel
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer)
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = getIconForItem(barang.nama),
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp)
-                        )
+                    // Gunakan weight dengan benar dalam Row
+                    HeaderCell("No", 1f)
+                    HeaderCell("Nama Barang", 3f)
+                    HeaderCell("Kondisi", 2f)
+                    HeaderCell("Lokasi", 2f)
+                    HeaderCell("Aksi", 2f)
+                }
 
-                        Spacer(modifier = Modifier.width(16.dp))
+                // Isi Tabel
+                LazyColumn {
+                    itemsIndexed(daftarBarang) { index, barang ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant
+                                    else MaterialTheme.colorScheme.surface
+                                )
+                                .padding(vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            DataCell((index + 1).toString(), 1f)
+                            DataCell(barang.nama, 3f)
 
-                        Column {
-                            Text(
-                                text = barang.nama,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = "Kondisi: ${barang.kondisi}",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = "Lokasi: ${barang.lokasi}",
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                            // Kondisi dengan warna berbeda
+                            Box(
+                                modifier = Modifier.weight(2f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = barang.kondisi,
+                                    color = when (barang.kondisi.lowercase()) {
+                                        "baik" -> Color(0xFF2E7D32)
+                                        "rusak" -> Color(0xFFC62828)
+                                        else -> MaterialTheme.colorScheme.onSurface
+                                    },
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+
+                            DataCell(barang.lokasi, 2f)
+
+                            // Action Buttons
+                            Row(
+                                modifier = Modifier.weight(2f),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                IconButton(
+                                    onClick = { onEditClick(barang) },
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "Edit",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(8.dp))
+
+                                IconButton(
+                                    onClick = { onDeleteClick(barang) },
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete",
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun HeaderCell(text: String, weight: Float) {
+    Box(
+        modifier = Modifier
+            //.weight(weight)
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun DataCell(text: String, weight: Float) {
+    Box(
+        modifier = Modifier
+            //.weight(weight)
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCekBarangLabTableScreen() {
+    MaterialTheme {
+        CekBarangLabTableScreen(
+            daftarBarang = listOf(
+                BarangLab("1", "Komputer", "Baik", "Lab 1"),
+                BarangLab("2", "Proyektor", "Rusak", "Lab 2"),
+                BarangLab("3", "Printer", "Baik", "Lab 3")
+            )
+        )
     }
 }

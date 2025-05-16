@@ -29,11 +29,7 @@ fun AppNavigation(
             enterTransition = { slideIntoContainerAnimation() },
             exitTransition = { slideOutOfContainerAnimation() }
         ) {
-            HomeRoute(
-                onNavigateClick = { source ->
-                    navController.navigate(TopLevelDestination.Detail.withArgs(source))
-                }
-            )
+            HomeRoute()
         }
 
         composable(
