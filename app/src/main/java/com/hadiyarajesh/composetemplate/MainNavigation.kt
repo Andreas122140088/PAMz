@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -132,13 +133,102 @@ fun LoginScreen(
     )
 }
 
-// Layar Home dengan Navigation Drawer
+// Komponen AppBar untuk semua layar
 @OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppBar(
+    title: String,
+    navController: NavController,
+    drawerState: DrawerState,
+    scope: CoroutineScope,
+    modifier: Modifier = Modifier
+) {
+    TopAppBar(
+        title = { Text(title) },
+        navigationIcon = {
+            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                Icon(Icons.Default.Menu, contentDescription = "Toggle drawer")
+            }
+        },
+        actions = {
+            // Tambahkan aksi lain jika diperlukan
+        }
+    )
+}
+
+// Layar Home
 @Composable
 fun HomeScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Welcome to Home!",
+            style = MaterialTheme.typography.headlineLarge,
+            fontSize = 32.sp,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        Text(
+            text = "You have successfully logged in.",
+            style = MaterialTheme.typography.bodyLarge,
+            fontSize = 18.sp
+        )
+    }
+}
+
+// Layar Profile
+@Composable
+fun ProfileScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Profile Screen",
+            style = MaterialTheme.typography.headlineLarge,
+            fontSize = 32.sp
+        )
+    }
+}
+
+// Layar Settings
+@Composable
+fun SettingsScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Settings Screen",
+            style = MaterialTheme.typography.headlineLarge,
+            fontSize = 32.sp
+        )
+    }
+}
+
+// Navigasi utama dengan Navigation Drawer global
+@Composable
+fun MainNavigation() {
+    val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -150,141 +240,107 @@ fun HomeScreen(
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                     label = { Text("Home") },
-                    selected = true,
+                    selected = navController.currentDestination?.route == "home",
                     onClick = {
                         scope.launch { drawerState.close() }
+                        navController.navigate("home") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
                     }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
                     label = { Text("Profile") },
-                    selected = false,
+                    selected = navController.currentDestination?.route == "profile",
                     onClick = {
                         scope.launch { drawerState.close() }
-                        navController.navigate("profile")
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
                     }
                 )
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
                     label = { Text("Settings") },
-                    selected = false,
+                    selected = navController.currentDestination?.route == "settings",
                     onClick = {
                         scope.launch { drawerState.close() }
-                        navController.navigate("settings")
+                        navController.navigate("settings") {
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
         },
         content = {
-            Scaffold(
-                modifier = modifier.fillMaxSize(),
-                topBar = {
-                    TopAppBar(
-                        title = { Text("Home") },
-                        navigationIcon = {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(Icons.Default.Menu, contentDescription = "Toggle drawer")
+            NavHost(navController = navController, startDestination = "login") {
+                composable("login") {
+                    LoginScreen(
+                        onLoginSuccess = {
+                            navController.navigate("home") {
+                                popUpTo("login") { inclusive = true }
                             }
                         }
                     )
-                },
-                content = { padding ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(padding),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Welcome to Home!",
-                            style = MaterialTheme.typography.headlineLarge,
-                            fontSize = 32.sp,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                        Text(
-                            text = "You have successfully logged in.",
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 18.sp
-                        )
-                    }
                 }
-            )
-        }
-    )
-}
-
-// Layar Profile
-@Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        content = { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Profile Screen",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontSize = 32.sp
-                )
+                composable("home") {
+                    Scaffold(
+                        topBar = {
+                            AppBar(
+                                title = "Home",
+                                navController = navController,
+                                drawerState = drawerState,
+                                scope = scope
+                            )
+                        },
+                        content = { padding ->
+                            HomeScreen(
+                                navController = navController,
+                                modifier = Modifier.padding(padding)
+                            )
+                        }
+                    )
+                }
+                composable("profile") {
+                    Scaffold(
+                        topBar = {
+                            AppBar(
+                                title = "Profile",
+                                navController = navController,
+                                drawerState = drawerState,
+                                scope = scope
+                            )
+                        },
+                        content = { padding ->
+                            ProfileScreen(
+                                navController = navController,
+                                modifier = Modifier.padding(padding)
+                            )
+                        }
+                    )
+                }
+                composable("settings") {
+                    Scaffold(
+                        topBar = {
+                            AppBar(
+                                title = "Settings",
+                                navController = navController,
+                                drawerState = drawerState,
+                                scope = scope
+                            )
+                        },
+                        content = { padding ->
+                            SettingsScreen(
+                                navController = navController,
+                                modifier = Modifier.padding(padding)
+                            )
+                        }
+                    )
+                }
             }
         }
     )
-}
-
-// Layar Settings
-@Composable
-fun SettingsScreen(modifier: Modifier = Modifier) {
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        content = { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Settings Screen",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontSize = 32.sp
-                )
-            }
-        }
-    )
-}
-
-// Navigasi utama
-@Composable
-fun MainNavigation() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "login") {
-        composable("login") {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                }
-            )
-        }
-        composable("home") {
-            HomeScreen(navController = navController)
-        }
-        composable("profile") {
-            ProfileScreen()
-        }
-        composable("settings") {
-            SettingsScreen()
-        }
-    }
 }
 
 @Preview(showBackground = true)

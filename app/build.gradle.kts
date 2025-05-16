@@ -83,6 +83,12 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.bundles.compose.ui.debug)
+
+    implementation (libs.androidx.material3)
+    implementation (libs.androidx.ui)
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.androidx.navigation.compose.v280)
+    implementation (libs.androidx.material.icons.extended.v170) // Untuk ikon
 }
 
 // Pass options to Room ksp processor
