@@ -13,6 +13,7 @@ import com.hadiyarajesh.composetemplate.ui.components.slideOutOfContainerAnimati
 import com.hadiyarajesh.composetemplate.ui.detail.DetailRoute
 import com.hadiyarajesh.composetemplate.ui.home.HomeRoute
 import com.hadiyarajesh.composetemplate.utility.Constants
+//import
 
 @Composable
 fun AppNavigation(
@@ -29,7 +30,15 @@ fun AppNavigation(
             enterTransition = { slideIntoContainerAnimation() },
             exitTransition = { slideOutOfContainerAnimation() }
         ) {
+<<<<<<< Updated upstream
             HomeRoute()
+=======
+//            HomeRoute(
+//                onNavigateClick = { source ->
+//                    navController.navigate(TopLevelDestination.Detail.withArgs(source))
+//                }
+//            )
+>>>>>>> Stashed changes
         }
 
         composable(
