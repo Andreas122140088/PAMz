@@ -1,5 +1,6 @@
 package com.hadiyarajesh.composetemplate
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
+// Impor page
+import com.hadiyarajesh.composetemplate.setting.SettingPage
+import com.hadiyarajesh.composetemplate.ui.home.HomeRoute
+import com.hadiyarajesh.composetemplate.ui.home.HomeViewModel
 
 // Data class untuk state login
 data class LoginState(
@@ -204,28 +210,8 @@ fun ProfileScreen(
     }
 }
 
-// Layar Settings
-@Composable
-fun SettingsScreen(
-    navController: NavController,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Settings Screen",
-            style = MaterialTheme.typography.headlineLarge,
-            fontSize = 32.sp
-        )
-    }
-}
-
 // Navigasi utama dengan Navigation Drawer global
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
@@ -294,10 +280,9 @@ fun MainNavigation() {
                                 scope = scope
                             )
                         },
-                        content = { padding ->
-                            HomeScreen(
-                                navController = navController,
-                                modifier = Modifier.padding(padding)
+                        content = {
+                            HomeRoute(
+//                                viewModel = HomeViewModel
                             )
                         }
                     )
@@ -331,7 +316,7 @@ fun MainNavigation() {
                             )
                         },
                         content = { padding ->
-                            SettingsScreen(
+                            SettingPage(
                                 navController = navController,
                                 modifier = Modifier.padding(padding)
                             )

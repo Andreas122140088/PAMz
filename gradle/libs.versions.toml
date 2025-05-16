@@ -1,9 +1,12 @@
 [versions]
 agp = "8.10.0"
+datastore-preferences = "1.1.6"
+datastore-preferences-version = "1.1.1"
 kotlin = "2.1.10"
 hilt = "2.56"
 hilt-navigation-compose = "1.2.0"
 kotlinx-coroutines-core = "1.10.2"
+kotlinx-coroutines-core-version = "1.8.0"
 ksp = "2.1.10-1.0.31"
 core-ktx = "1.16.0"
 junit = "4.13.2"
@@ -26,6 +29,8 @@ coil = "3.1.0"
 ui = "1.8.1"
 
 [libraries]
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore-preferences" }
+androidx-datastore-preferences-v111 = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore-preferences-version" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons-extended" }
 androidx-material-icons-extended-v170 = { module = "androidx.compose.material:material-icons-extended", version.ref = "material-icons-extended-version" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
@@ -37,6 +42,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
+kotlinx-coroutines-core-v180 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core-version" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime-ktx" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }

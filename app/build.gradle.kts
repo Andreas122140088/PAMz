@@ -89,6 +89,12 @@ dependencies {
     implementation (libs.kotlinx.coroutines.core)
     implementation (libs.androidx.navigation.compose.v280)
     implementation (libs.androidx.material.icons.extended.v170) // Untuk ikon
+    implementation (libs.kotlinx.coroutines.core.v180)
+    implementation (libs.androidx.datastore.preferences.v111)
+    implementation (libs.navigation.compose)
+    implementation (libs.androidx.material.icons.extended)
+    implementation (libs.androidx.datastore.preferences)
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }
 
 // Pass options to Room ksp processor
