@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.ksp)
+
+    // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -76,6 +79,12 @@ dependencies {
     implementation(libs.bundles.coil) {
         because("An image loading library for Android backed by Kotlin Coroutines")
     }
+
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+
+    // Add the dependencies for Firebase products you want to use
+    implementation("com.google.firebase:firebase-analytics")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
