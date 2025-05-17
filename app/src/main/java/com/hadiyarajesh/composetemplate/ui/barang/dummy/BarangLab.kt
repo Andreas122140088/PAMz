@@ -1,4 +1,4 @@
-package com.hadiyarajesh.composetemplate
+package com.hadiyarajesh.composetemplate.ui.barang.dummy
 
 data class BarangLab(
     val id: String,

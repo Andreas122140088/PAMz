@@ -30,15 +30,15 @@ fun AppNavigation(
             enterTransition = { slideIntoContainerAnimation() },
             exitTransition = { slideOutOfContainerAnimation() }
         ) {
-<<<<<<< Updated upstream
+//<<<<<<< Updated upstream
             HomeRoute()
-=======
+//=======
 //            HomeRoute(
 //                onNavigateClick = { source ->
 //                    navController.navigate(TopLevelDestination.Detail.withArgs(source))
 //                }
 //            )
->>>>>>> Stashed changes
+//>>>>>>> Stashed changes
         }
 
         composable(

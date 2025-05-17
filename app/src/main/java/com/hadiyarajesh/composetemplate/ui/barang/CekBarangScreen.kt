@@ -1,3 +1,5 @@
+package com.hadiyarajesh.composetemplate.ui.barang
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 //import androidx.compose.foundation.layout.FlowRowScopeInstance.weight
@@ -15,13 +17,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hadiyarajesh.composetemplate.BarangLab
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-
-
-
+import com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab
 
 
 @OptIn(ExperimentalMaterial3Api::class)
