@@ -21,7 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.yourapp.ui.barang.BarangTable
+import com.hadiyarajesh.composetemplate.ui.barang.BarangTable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.hadiyarajesh.composetemplate.setting.SettingPage
