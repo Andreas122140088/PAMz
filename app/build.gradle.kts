@@ -65,6 +65,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.firebase.database.ktx)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.material.icons.extended) // atau versi Compose kamu
 
