@@ -1,4 +1,4 @@
-package com.example.myapp.ui
+package com.hadiyarajesh.composetemplate.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
