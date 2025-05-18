@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +28,7 @@ fun ProfileScreen(profile: ProfileData) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color(0xFFE3F2FD))
                 .padding(innerPadding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -39,36 +42,56 @@ fun ProfileScreen(profile: ProfileData) {
                 contentAlignment = Alignment.Center
             ) {
                 // Tambahkan komponen Image di sini jika tersedia
+                Text(
+                    text = profile.name.first().toString(),
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Nama
             Text(
                 text = profile.name,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Detail Profil
-            Column(
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(16.dp)
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
-                ProfileItem(label = "Email", value = profile.email)
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-                ProfileItem(label = "Status", value = profile.status)
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-                ProfileItem(label = "Peran", value = profile.role)
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-                ProfileItem(label = "Tanggal Masuk", value = profile.joinDate)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    ProfileItem(label = "Email", value = profile.email)
+                    Divider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
+                    ProfileItem(label = "Status", value = profile.status)
+                    Divider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
+                    ProfileItem(label = "Peran", value = profile.role)
+                    Divider(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
+                    ProfileItem(label = "Tanggal Masuk", value = profile.joinDate)
+                }
             }
         }
     }
@@ -76,17 +99,29 @@ fun ProfileScreen(profile: ProfileData) {
 
 @Composable
 fun ProfileItem(label: String, value: String) {
-    Column {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium
-        )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 14.sp),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 

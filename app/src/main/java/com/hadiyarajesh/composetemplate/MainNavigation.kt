@@ -347,6 +347,7 @@ fun DrawerContentPreview() {
             modifier = Modifier
                 .width(300.dp)
                 .fillMaxHeight()
+
         ) {
             DrawerContent(
                 navController = navController,
