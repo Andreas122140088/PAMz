@@ -385,9 +385,9 @@ fun MainNavigation() {
                         content = { padding ->
                             CekBarangLabTableScreen(
                                 daftarBarang = listOf(
-                                    BarangLab("1", "Komputer", "Baik", "Lab 1"),
-                                    BarangLab("2", "Proyektor", "Rusak", "Lab 2"),
-                                    BarangLab("3", "Printer", "Baik", "Lab 3")
+                                    BarangLab("Laptop", "Elektronik", "Baik", "LT01", "PG01", "Aktif", "18/05/2025"),
+                                    BarangLab("Proyektor", "Elektronik", "Perlu Perbaikan", "LT02", "PG02", "Nonaktif", "10/04/2024"),
+                                    BarangLab("Meja", "Furnitur", "Baik", "LT03", "PG03", "Aktif", "05/03/2023")
                                 )
                             )
                         }
@@ -405,7 +405,7 @@ fun MainNavigation() {
                         },
                         content = { padding ->
                             TambahBarangScreen(
-                                onSimpan = { nama, kondisi, lokasi -> }
+                                onSimpan = { nama, kondisi, lokasi, labtekId, pengelolaId, status, tanggal -> }
                             )
                         }
                     )
