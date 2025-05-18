@@ -145,7 +145,7 @@ private fun HomeScreenContent(
             Image(
                 painter = painterResource(id = R.drawable.erh),
                 contentDescription = "Deskripsi aksesibilitas",
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(150.dp)
             )
             Text(
                 text = "Selamat Datang di Aplikasi ERH",
