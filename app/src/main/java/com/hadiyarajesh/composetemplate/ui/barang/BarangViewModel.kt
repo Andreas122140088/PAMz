@@ -41,7 +41,7 @@ class BarangViewModel @Inject constructor(
             try {
                 // Assuming "barang/list" is a list, you might want to implement add logic properly
                 // For simplicity, just write the new barang at a unique path
-                firebaseDatabaseRepository.writeData("barang/list/${barang.id}", barang)
+                firebaseDatabaseRepository.writeData("barang/list/${barang.nama}", barang)
                 loadBarang() // reload after adding
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(errorMessage = e.message)
