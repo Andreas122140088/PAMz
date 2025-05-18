@@ -38,4 +38,20 @@ internal class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun loadDataFromFirebase() {
+        viewModelScope.launch {
+            _uiState.value = HomeScreenUiState.Loading
+            try {
+                val image = homeRepository.loadDataFromFirebase()
+                if (image != null) {
+                    _uiState.value = HomeScreenUiState.Success(data = image)
+                } else {
+                    _uiState.value = HomeScreenUiState.Error(msg = "No data found in Firebase")
+                }
+            } catch (e: Exception) {
+                _uiState.value = HomeScreenUiState.Error(msg = e.message ?: "Something went wrong")
+            }
+        }
+    }
 }

@@ -86,6 +86,7 @@ dependencies {
 
     // Add the dependencies for Firebase products you want to use
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-database-ktx")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
