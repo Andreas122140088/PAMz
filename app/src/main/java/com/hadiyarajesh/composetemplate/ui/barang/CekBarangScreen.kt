@@ -1,4 +1,4 @@
-package com.example.yourapp.ui.barang
+package com.hadiyarajesh.composetemplate.ui.barang
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

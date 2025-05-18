@@ -1,6 +1,6 @@
 package com.hadiyarajesh.composetemplate.ui.barang.dummy
 
-import com.example.yourapp.ui.barang.BarangLab
+import com.hadiyarajesh.composetemplate.ui.barang.BarangLab
 
 val dummyBarangLab = listOf(
     BarangLab("Laptop", "Elektronik", "Baik", "LT01", "PG01", "Aktif", "18/05/2025"),
