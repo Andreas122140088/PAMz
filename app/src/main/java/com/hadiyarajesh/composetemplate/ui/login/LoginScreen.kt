@@ -3,7 +3,6 @@ package com.hadiyarajesh.composetemplate.ui.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,7 +24,6 @@ data class LoginState(
     val errorMessage: String? = null
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onLoginSuccess: (String, String) -> Unit,
@@ -53,6 +50,7 @@ fun LoginScreen(
     }
 
     Scaffold(
+<<<<<<< HEAD
         topBar = {
             TopAppBar(
                 title = { Text("Login") },
@@ -101,6 +99,58 @@ fun LoginScreen(
                         modifier = Modifier.size(100.dp) // Slightly smaller logo
                     )
 
+=======
+        modifier = modifier.fillMaxSize(),
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFE3F2FD))
+                    .padding(padding)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.erh),
+                    contentDescription = "Deskripsi aksesibilitas",
+                    modifier = Modifier.size(200.dp)
+                )
+
+                Text(
+                    text = "Welcome ERH",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(bottom = 32.dp)
+                )
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    isError = loginState.errorMessage != null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    enabled = !loginState.isLoading
+                )
+
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = loginState.errorMessage != null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    enabled = !loginState.isLoading
+                )
+
+                loginState.errorMessage?.let { message ->
+>>>>>>> 5ec21fad4d76a3fc50c0c1c8f014bbf8ce8481a2
                     Text(
                         text = "Welcome to ERH",
                         style = MaterialTheme.typography.headlineSmall.copy(
@@ -121,6 +171,7 @@ fun LoginScreen(
                         isError = loginState.errorMessage != null && email.isBlank(),
                         modifier = Modifier
                             .fillMaxWidth()
+<<<<<<< HEAD
                             .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
                         shape = RoundedCornerShape(8.dp),
                         enabled = !loginState.isLoading,
@@ -129,8 +180,12 @@ fun LoginScreen(
                             unfocusedBorderColor = Color(0xFF757575),
                             errorBorderColor = Color(0xFFF44336)
                         )
+=======
+                            .padding(bottom = 16.dp)
+>>>>>>> 5ec21fad4d76a3fc50c0c1c8f014bbf8ce8481a2
                     )
 
+<<<<<<< HEAD
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
@@ -159,6 +214,27 @@ fun LoginScreen(
                                 .fillMaxWidth()
                                 .padding(bottom = 8.dp)
                         )
+=======
+                Button(
+                    onClick = {
+                        loginState = loginState.copy(isLoading = true)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    enabled = !loginState.isLoading,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF4CAF50) // Change to green
+                    )
+                ) {
+                    if (loginState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text("Login")
+>>>>>>> 5ec21fad4d76a3fc50c0c1c8f014bbf8ce8481a2
                     }
 
                     Button(
@@ -194,10 +270,10 @@ fun LoginScreen(
                 }
             }
         }
-    }
+    )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
     MaterialTheme {
