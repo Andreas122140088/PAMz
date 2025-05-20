@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +32,8 @@ import com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileData
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileScreen
 import com.hadiyarajesh.composetemplate.ui.login.LoginScreen
+import com.hadiyarajesh.composetemplate.ui.barang.BarangRepository
+import kotlinx.coroutines.flow.emptyFlow
 
 // Data class untuk state login
 data class LoginState(
@@ -273,13 +276,16 @@ fun MainNavigation() {
                             )
                         },
                         content = { padding ->
-                            BarangTable(
-                                barangList = listOf(
-                                    BarangLab("Laptop", "Elektronik", "Baik", "LT01", "PG01", "Aktif", "18/05/2025"),
-                                    BarangLab("Proyektor", "Elektronik", "Perlu Perbaikan", "LT02", "PG02", "Nonaktif", "10/04/2024"),
-                                    BarangLab("Meja", "Furnitur", "Baik", "LT03", "PG03", "Aktif", "05/03/2023")
+                            val barangList by BarangRepository.listenBarangList().collectAsState(initial = emptyList())
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(padding)
+                            ) {
+                                BarangTable(
+                                    barangList = barangList
                                 )
-                            )
+                            }
                         }
                     )
                 }
@@ -296,7 +302,13 @@ fun MainNavigation() {
                         },
                         content = { padding ->
                             TambahBarangScreen(
-                                onSimpan = { nama, kondisi, lokasi, labtekId, pengelolaId, status, tanggal -> }
+                                onSimpan = { nama, kategori, kondisi, labtekId, pengelolaId, status, tanggal ->
+                                    val barang = BarangLab(nama, kategori, kondisi, labtekId, pengelolaId, status, tanggal)
+                                    // Gunakan coroutineScope.launch, bukan LaunchedEffect (LaunchedEffect hanya untuk composable)
+                                    scope.launch {
+                                        BarangRepository.tambahBarang(barang)
+                                    }
+                                }
                             )
                         }
                     )
