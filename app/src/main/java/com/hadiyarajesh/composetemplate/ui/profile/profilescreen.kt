@@ -97,7 +97,7 @@ fun ProfileScreenPreview() {
         name = "John Doe",
         email = "john.doe@example.com",
         status = "Aktif",
-        role = "Administrator",
+        role = "Admini",
         joinDate = "18 Mei 2025"
     )
     ProfileScreen(profile = sampleProfile)
