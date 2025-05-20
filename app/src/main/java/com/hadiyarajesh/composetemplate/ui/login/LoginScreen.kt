@@ -3,7 +3,6 @@ package com.hadiyarajesh.composetemplate.ui.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +23,6 @@ data class LoginState(
     val errorMessage: String? = null
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onLoginSuccess: (String, String) -> Unit,
@@ -51,42 +48,29 @@ fun LoginScreen(
         }
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFFE3F2FD)), // Consistent background color
-        contentAlignment = Alignment.Center // Center the Card both vertically and horizontally
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(0.9f) // Slightly narrower for better aesthetics
-                .wrapContentHeight()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White)
-        ) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        content = { padding ->
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                    .fillMaxSize()
+                    .background(Color(0xFFE3F2FD))
+                    .padding(padding)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.erh),
-                    contentDescription = "ERH Logo",
-                    modifier = Modifier.size(120.dp) // Smaller logo for better centering
+                    contentDescription = "Deskripsi aksesibilitas",
+                    modifier = Modifier.size(200.dp)
                 )
 
                 Text(
-                    text = "Welcome to ERH",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                        color = Color(0xFF1E88E5) // Blue color for title
-                    ),
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    text = "Welcome ERH",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(bottom = 32.dp)
                 )
 
                 OutlinedTextField(
@@ -97,8 +81,7 @@ fun LoginScreen(
                     isError = loginState.errorMessage != null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
-                    shape = RoundedCornerShape(8.dp),
+                        .padding(bottom = 16.dp),
                     enabled = !loginState.isLoading
                 )
 
@@ -111,8 +94,7 @@ fun LoginScreen(
                     isError = loginState.errorMessage != null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
-                    shape = RoundedCornerShape(8.dp),
+                        .padding(bottom = 16.dp),
                     enabled = !loginState.isLoading
                 )
 
@@ -123,7 +105,7 @@ fun LoginScreen(
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp)
+                            .padding(bottom = 16.dp)
                     )
                 }
 
@@ -133,33 +115,27 @@ fun LoginScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
+                        .height(50.dp),
                     enabled = !loginState.isLoading,
-                    shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF4CAF50), // Green button
-                        contentColor = Color.White
+                        containerColor = Color(0xFF4CAF50) // Change to green
                     )
                 ) {
                     if (loginState.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            color = Color.White
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
-                        Text(
-                            text = "Login",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium
-                        )
+                        Text("Login")
                     }
                 }
             }
         }
-    }
+    )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
     MaterialTheme {
