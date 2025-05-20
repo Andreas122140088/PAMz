@@ -27,19 +27,24 @@ data class BarangLab(
     val tanggalMasuk: String
 )
 
+// ... [bagian import dan data class tidak diubah]
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BarangTable(barangList: List<com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab>) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Daftar Barang") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("Daftar Barang")
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xFF1E88E5),
+                    titleContentColor = Color.White
                 )
             )
         },
+
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F7FA)) // Warna latar belakang lebih lembut
@@ -61,11 +66,11 @@ fun BarangTable(barangList: List<com.hadiyarajesh.composetemplate.ui.barang.dumm
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column {
-                    // Header Tabel
+                    // Header Tabel (warna diubah menjadi hijau)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.9f))
+                            .background(Color(0xFF4CAF50)) // Hijau
                             .padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -222,6 +227,7 @@ fun BarangTable(barangList: List<com.hadiyarajesh.composetemplate.ui.barang.dumm
         }
     }
 }
+
 
 @Composable
 fun StatusBadge(status: String, modifier: Modifier = Modifier) {

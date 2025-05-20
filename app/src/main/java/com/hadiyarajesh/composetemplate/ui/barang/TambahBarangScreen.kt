@@ -47,14 +47,17 @@ fun TambahBarangScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Tambah Barang") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("Tambah Barang")
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xFF1E88E5),
+                    titleContentColor = Color.White
                 )
             )
         },
+
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F7FA)) // Softer background color
@@ -86,16 +89,6 @@ fun TambahBarangScreen(
                     verticalArrangement = Arrangement.spacedBy(20.dp), // Increased spacing
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = "Tambah Barang",
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 26.sp, // Slightly larger for prominence
-                            color = Color(0xFF1E88E5)
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
 
                     OutlinedTextField(
                         value = namaBarang,

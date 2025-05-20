@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,11 +19,18 @@ import androidx.compose.ui.unit.dp
 fun ProfileScreen(profile: ProfileData) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Profil") }
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("Profile")
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xFF1E88E5),
+                    titleContentColor = Color.White
+                )
             )
-        }
-    ) { innerPadding ->
+        },
+
+        ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()

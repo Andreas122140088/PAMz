@@ -2,6 +2,7 @@ package com.hadiyarajesh.composetemplate.ui.home
 
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,11 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -43,8 +47,6 @@ import com.hadiyarajesh.composetemplate.data.entity.Image
 import com.hadiyarajesh.composetemplate.ui.components.ErrorItem
 import com.hadiyarajesh.composetemplate.ui.components.LoadingIndicator
 import com.hadiyarajesh.composetemplate.utility.Constants
-import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.Brush
 
 data class TrendData(val label: String, val values: List<Float>)
 
@@ -71,56 +73,68 @@ private fun HomeScreen(
         loadData()
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "HOME") }
-            )
-        }
-    )
-    { innerPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Latar belakang biru melengkung yang menyatu sampai tulisan HOME
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .height(100.dp)
                 .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFE3F2FD), // Light blue
-                            Color(0xFFBBDEFB)  // Slightly darker blue
-                        )
+                    color = Color(0xFF0C6CF2),
+                    shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
+                )
+        )
+
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text("HOME") },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = Color.White
                     )
                 )
-                .padding(innerPadding)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
+            },
+            containerColor = Color.Transparent
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
             ) {
-                when (uiState) {
-                    is HomeScreenUiState.Initial -> {}
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    when (uiState) {
+                        is HomeScreenUiState.Initial -> {}
 
-                    is HomeScreenUiState.Loading -> {
-                        LoadingIndicator(modifier = Modifier.fillMaxSize())
-                    }
+                        is HomeScreenUiState.Loading -> {
+                            LoadingIndicator(modifier = Modifier.fillMaxSize())
+                        }
 
-                    is HomeScreenUiState.Success -> {
-                        HomeScreenContent(
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                        is HomeScreenUiState.Success -> {
+                            HomeScreenContent(
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
 
-                    is HomeScreenUiState.Error -> {
-                        ErrorItem(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                            text = uiState.msg
-                        )
+                        is HomeScreenUiState.Error -> {
+                            ErrorItem(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize(),
+                                text = uiState.msg
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
+
 
 @Composable
 private fun HomeScreenContent(
@@ -170,8 +184,6 @@ private fun HomeScreenContent(
         }
     }
 }
-
-
 
 @Preview(showSystemUi = true)
 @Composable
