@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+//import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -138,8 +138,8 @@ fun TambahBarangScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
-                                .menuAnchor(),
+                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
+//                                .menuAnchor(),
                             shape = RoundedCornerShape(8.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color(0xFF1E88E5),
@@ -301,3 +301,4 @@ fun TambahBarangScreenPreview() {
         onSimpan = { _, _, _, _, _, _, _ -> }
     )
 }
+

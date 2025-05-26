@@ -24,76 +24,107 @@ fun ProfileScreen(profile: ProfileData) {
                     Text("Profile")
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF1E88E5),
+                    containerColor = Color.Transparent,
                     titleContentColor = Color.White
                 )
             )
         },
-
-        ) { innerPadding ->
-        Column(
+        containerColor = Color.Transparent
+    ) { innerPadding ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color(0xFFE3F2FD)) // Biru muda untuk background
+                .padding(innerPadding) // Tambahkan padding dari Scaffold agar konten tidak tertutup top bar
         ) {
-            // Placeholder untuk foto profil
+            // Blue background curve agar serasi dengan top bar biru tua
             Box(
                 modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center
-            ) {
-                // Tambahkan komponen Image di sini jika tersedia
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Nama
-            Text(
-                text = profile.name,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(
+                        color = Color(0xF7276BB4), // Biru tua, sama dengan top bar
+                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
+                    )
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Detail Profil
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(16.dp)
+                    .align(Alignment.TopCenter)
+                    .padding(top = 56.dp, start = 24.dp, end = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ProfileItem(label = "Email", value = profile.email)
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-                ProfileItem(label = "Status", value = profile.status)
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-                ProfileItem(label = "Peran", value = profile.role)
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
-                ProfileItem(label = "Tanggal Masuk", value = profile.joinDate)
+                // Profile picture placeholder
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF90CAF9)), // Lighter blue
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = profile.name.take(1).uppercase(),
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = profile.name,
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        color = Color(0xFF0C6CF2),
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = profile.email,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = Color(0xFF1976D2)
+                    )
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(20.dp)
+                    ) {
+                        ProfileInfoRow(label = "Status", value = profile.status)
+                        ProfileInfoRow(label = "Role", value = profile.role)
+                        ProfileInfoRow(label = "Join Date", value = profile.joinDate)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun ProfileItem(label: String, value: String) {
-    Column {
+private fun ProfileInfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = Color(0xFF1976D2),
+                fontWeight = FontWeight.SemiBold
+            )
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = Color(0xFF424242)
+            )
         )
     }
 }

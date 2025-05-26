@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
@@ -53,17 +54,32 @@ fun AppBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(title) },
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        },
         navigationIcon = {
-            if (showMenuIcon) { // Hanya tampilkan ikon menu jika showMenuIcon true
+            if (showMenuIcon) {
                 IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Toggle drawer")
+                    Icon(Icons.Default.Menu, contentDescription = "Toggle drawer", tint = Color.White)
                 }
             }
         },
         actions = {
-            // Tambahkan aksi lain jika diperlukan
-        }
+            IconButton(onClick = { navController.navigate("preview") }) {
+                Icon(Icons.Default.Visibility, contentDescription = "Preview", tint = Color(0xFF90CAF9)) // Biru muda untuk aksen
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFF008FFD), // Biru tua untuk top bar
+            titleContentColor = Color.White
+        ),
+        modifier = modifier
     )
 }
 
@@ -76,24 +92,25 @@ fun DrawerContent(
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(
-        modifier = modifier.fillMaxHeight()
+        modifier = modifier.fillMaxHeight(),
+        drawerContainerColor = Color(0xFFE3F2FD) // Biru muda sangat terang
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFE3F2FD)) // Custom background color (light blue)
+                .background(Color(0xFFE3F2FD)) // Biru muda sangat terang
         ) {
             Column {
                 Spacer(Modifier.height(12.dp))
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Home",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFF1565C0)
                             )
                         )
                     },
@@ -107,14 +124,14 @@ fun DrawerContent(
                     }
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Profile",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFF1565C0)
                             )
                         )
                     },
@@ -127,14 +144,14 @@ fun DrawerContent(
                     }
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Cek barang") },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Cek barang", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Cek Barang",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFF1565C0)
                             )
                         )
                     },
@@ -147,14 +164,14 @@ fun DrawerContent(
                     }
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Tambah barang") },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Tambah barang", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Tambah Barang",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFF1565C0)
                             )
                         )
                     },
@@ -167,14 +184,14 @@ fun DrawerContent(
                     }
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Settings",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFF1565C0)
                             )
                         )
                     },
@@ -368,3 +385,21 @@ fun DrawerContentPreview() {
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun AppBarPreview() {
+    MaterialTheme {
+        val navController = rememberNavController()
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        AppBar(
+            title = "Preview AppBar",
+            navController = navController,
+            drawerState = drawerState,
+            scope = scope,
+            showMenuIcon = true
+        )
+    }
+}
+
