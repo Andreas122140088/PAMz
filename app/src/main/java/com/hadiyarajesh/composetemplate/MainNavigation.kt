@@ -98,7 +98,7 @@ fun DrawerContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFE3F2FD)) // Biru muda sangat terang
+                .background(Color(0xF7276BB4)) // Biru muda sangat terang
         ) {
             Column {
                 Spacer(Modifier.height(12.dp))
@@ -110,7 +110,7 @@ fun DrawerContent(
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1565C0)
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -131,7 +131,7 @@ fun DrawerContent(
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1565C0)
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -151,7 +151,7 @@ fun DrawerContent(
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1565C0)
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -171,7 +171,7 @@ fun DrawerContent(
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1565C0)
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -191,7 +191,7 @@ fun DrawerContent(
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1565C0)
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },

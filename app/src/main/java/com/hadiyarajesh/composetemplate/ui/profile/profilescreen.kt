@@ -74,7 +74,7 @@ fun ProfileScreen(profile: ProfileData) {
                 Text(
                     text = profile.name,
                     style = MaterialTheme.typography.headlineSmall.copy(
-                        color = Color(0xFF0C6CF2),
+                        color = Color(0xFF000000),
                         fontWeight = FontWeight.Bold
                     )
                 )
@@ -82,7 +82,7 @@ fun ProfileScreen(profile: ProfileData) {
                 Text(
                     text = profile.email,
                     style = MaterialTheme.typography.bodyLarge.copy(
-                        color = Color(0xFF1976D2)
+                        color = Color(0xFF000000)
                     )
                 )
                 Spacer(modifier = Modifier.height(24.dp))

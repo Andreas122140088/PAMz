@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,26 +21,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hadiyarajesh.composetemplate.R
@@ -47,18 +40,14 @@ import com.hadiyarajesh.composetemplate.data.entity.Image
 import com.hadiyarajesh.composetemplate.ui.components.ErrorItem
 import com.hadiyarajesh.composetemplate.ui.components.LoadingIndicator
 import com.hadiyarajesh.composetemplate.utility.Constants
-
-data class TrendData(val label: String, val values: List<Float>)
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val homeScreenUiState by remember { viewModel.uiState }.collectAsStateWithLifecycle()
-
     HomeScreen(
-        uiState = homeScreenUiState,
+        uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
         loadData = { viewModel.loadData() }
     )
 }
@@ -69,32 +58,48 @@ private fun HomeScreen(
     uiState: HomeScreenUiState,
     loadData: () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
+
     LaunchedEffect(Unit) {
         loadData()
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Latar belakang biru melengkung yang menyatu sampai tulisan HOME
+        Spacer(modifier = Modifier.height(56.dp))
+        // Latar belakang biru melengkung dengan lingkaran di tengah untuk logo
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
+                .height(250.dp)
                 .background(
-                    color = Color(0xFF0C6CF2),
+                    color = Color(0xF7276BB4),
                     shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
                 )
-        )
+        ) {
+
+            // Lingkaran putih untuk membungkus logo
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .align(Alignment.BottomCenter)
+                    .graphicsLayer { translationY = 60f } // setengah keluar dari box biru
+                    .background(color = Color.White, shape = RoundedCornerShape(60.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.erh),
+                    contentDescription = "Deskripsi aksesibilitas",
+                    modifier = Modifier.size(90.dp)
+                )
+            }
+        }
 
         Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text("HOME") },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = Color.White
-                    )
-                )
-            },
+            topBar = {}, // Remove title from AppBar
             containerColor = Color.Transparent
         ) { innerPadding ->
             Box(
@@ -105,6 +110,8 @@ private fun HomeScreen(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    // Spacer agar logo turun ke bawah HOME
+                    Spacer(modifier = Modifier.height(160.dp)) // lebih besar agar tidak dobel logo
                     when (uiState) {
                         is HomeScreenUiState.Initial -> {}
 
@@ -121,7 +128,7 @@ private fun HomeScreen(
                         is HomeScreenUiState.Error -> {
                             ErrorItem(
                                 modifier = Modifier
-                                    .padding(16.dp)
+                                    .padding(40.dp)
                                     .fillMaxSize(),
                                 text = uiState.msg
                             )
@@ -132,9 +139,6 @@ private fun HomeScreen(
         }
     }
 }
-
-
-
 
 @Composable
 private fun HomeScreenContent(
@@ -154,16 +158,12 @@ private fun HomeScreenContent(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 40.dp) // Turunkan agar rapi di bawah box biru
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.erh),
-                contentDescription = "Deskripsi aksesibilitas",
-                modifier = Modifier.size(150.dp)
-            )
             Text(
                 text = "Selamat Datang di Aplikasi ERH",
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
         // Bottom section: Logout Button

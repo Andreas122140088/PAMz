@@ -47,12 +47,12 @@ fun BarangTable(barangList: List<com.hadiyarajesh.composetemplate.ui.barang.dumm
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text(barang.nama, style = MaterialTheme.typography.titleMedium.copy(color = Color(0xFF0C387D), fontWeight = FontWeight.Bold))
+                                Text(barang.nama, style = MaterialTheme.typography.titleMedium.copy(color = Color(0xFF000000), fontWeight = FontWeight.Bold))
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("Kategori: ${barang.kategori}", color = Color(0xFF1976D2))
-                                Text("Kondisi: ${barang.kondisi}", color = Color(0xFF1976D2))
-                                Text("Status: ${barang.status}", color = Color(0xFF42A5F5))
-                                Text("Tanggal Masuk: ${barang.tanggalMasuk}", color = Color(0xFF1565C0))
+                                Text("Kategori: ${barang.kategori}", color = Color(0xFF000000))
+                                Text("Kondisi: ${barang.kondisi}", color = Color(0xFF000000))
+                                Text("Status: ${barang.status}", color = Color(0xFF000000))
+                                Text("Tanggal Masuk: ${barang.tanggalMasuk}", color = Color(0xFF000000))
                             }
                         }
                     }
