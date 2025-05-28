@@ -1,7 +1,6 @@
 package com.hadiyarajesh.composetemplate.ui.home
 
 import android.widget.Toast
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,18 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,7 +47,7 @@ internal fun HomeRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 private fun HomeScreen(
     uiState: HomeScreenUiState,
@@ -69,24 +64,27 @@ private fun HomeScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(56.dp))
-        // Latar belakang biru melengkung dengan lingkaran di tengah untuk logo
+        // Latar belakang biru melengkung dan logo
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
-                .background(
-                    color = Color(0xF7276BB4),
-                    shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
-                )
+                .height(220.dp)
+                .align(Alignment.TopCenter)
         ) {
-
-            // Lingkaran putih untuk membungkus logo
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = Color(0xF7276BB4),
+                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
+                    )
+            )
+            // Lingkaran putih untuk membungkus logo, bagian bawah rata dengan box biru
             Box(
                 modifier = Modifier
                     .size(120.dp)
                     .align(Alignment.BottomCenter)
-                    .graphicsLayer { translationY = 60f } // setengah keluar dari box biru
+                    // Hapus graphicsLayer agar lingkaran rata dengan box biru
                     .background(color = Color.White, shape = RoundedCornerShape(60.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -95,6 +93,37 @@ private fun HomeScreen(
                     contentDescription = "Deskripsi aksesibilitas",
                     modifier = Modifier.size(90.dp)
                 )
+                // Teks di bawah logo, bukan di dalam lingkaran
+            }
+        }
+        // Kolom untuk teks dan tombol
+        val context = LocalContext.current
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 220.dp), // Langsung di bawah box biru
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Selamat Datang di Aplikasi ERH",
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(top = 0.dp)
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = {
+                    Toast.makeText(context, "Logging out", Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 32.dp, end = 32.dp, bottom = 32.dp), // Lebih rapi di bawah
+                shape = RoundedCornerShape(24.dp), // Lebih membulat
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF4CAF50),
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Log Out", style = MaterialTheme.typography.titleMedium)
             }
         }
 
@@ -107,11 +136,8 @@ private fun HomeScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    // Spacer agar logo turun ke bawah HOME
-                    Spacer(modifier = Modifier.height(160.dp)) // lebih besar agar tidak dobel logo
+                    // Spacer agar teks turun di bawah box biru
+                    Spacer(modifier = Modifier.height(250.dp))
                     when (uiState) {
                         is HomeScreenUiState.Initial -> {}
 
@@ -138,7 +164,8 @@ private fun HomeScreen(
             }
         }
     }
-}
+
+
 
 @Composable
 private fun HomeScreenContent(
@@ -153,35 +180,15 @@ private fun HomeScreenContent(
     ) {
         // Top section: Image and Welcome Text
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
                 .padding(top = 40.dp) // Turunkan agar rapi di bawah box biru
         ) {
-            Text(
-                text = "Selamat Datang di Aplikasi ERH",
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+
         }
-        // Bottom section: Logout Button
-        Button(
-            onClick = {
-                Toast.makeText(context, "Logging out", Toast.LENGTH_SHORT).show()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50),
-                contentColor = Color.White
-            )
-        ) {
-            Text("Log Out")
-        }
+
     }
 }
 
