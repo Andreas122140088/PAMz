@@ -14,7 +14,21 @@ object BarangRepository {
     private val db = FirebaseDatabase.getInstance().reference.child("barang")
 
     suspend fun tambahBarang(barang: BarangLab) {
-        db.push().setValue(barang).await()
+        val newRef = db.push()
+        val barangWithId = barang.copy(id = newRef.key ?: "")
+        newRef.setValue(barangWithId).await()
+    }
+
+    suspend fun hapusBarang(barang: BarangLab) {
+        if (barang.id.isNotEmpty()) {
+            db.child(barang.id).removeValue().await()
+        }
+    }
+
+    suspend fun updateBarang(barang: BarangLab) {
+        if (barang.id.isNotEmpty()) {
+            db.child(barang.id).setValue(barang).await()
+        }
     }
 
     fun listenBarangList(): Flow<List<BarangLab>> = callbackFlow {

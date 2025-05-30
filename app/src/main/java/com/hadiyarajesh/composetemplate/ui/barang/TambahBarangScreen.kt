@@ -21,6 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
 import java.util.*
+import com.google.firebase.auth.FirebaseAuth
+import com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,8 +143,8 @@ fun TambahBarangScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
-//                                .menuAnchor(),
+                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
+                                .menuAnchor(), // Tambahkan menuAnchor agar dropdown bisa dibuka
                             shape = RoundedCornerShape(8.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color(0xFF1E88E5),
@@ -267,7 +272,21 @@ fun TambahBarangScreen(
                     Button(
                         onClick = {
                             if (namaBarang.isNotBlank() && kategoriBarang.isNotBlank() && kondisiSelected != "Pilih Kondisi" && labtekId.isNotBlank() && pengelolaId.isNotBlank() && status.isNotBlank() && tanggalMasuk.isNotBlank()) {
-                                onSimpan(namaBarang, kategoriBarang, kondisiSelected, labtekId, pengelolaId, status, tanggalMasuk)
+                                val currentUser = FirebaseAuth.getInstance().currentUser
+                                val pengelolaEmail = currentUser?.email ?: pengelolaId
+                                onSimpan(namaBarang, kategoriBarang, kondisiSelected, labtekId, pengelolaEmail, status, tanggalMasuk)
+                                val barang = BarangLab(
+                                    nama = namaBarang,
+                                    kategori = kategoriBarang,
+                                    kondisi = kondisiSelected,
+                                    labtekId = labtekId,
+                                    pengelolaId = pengelolaEmail,
+                                    status = status,
+                                    tanggalMasuk = tanggalMasuk
+                                )
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    BarangRepository.tambahBarang(barang)
+                                }
                                 Toast.makeText(context, "Barang berhasil ditambahkan", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(context, "Harap isi semua field", Toast.LENGTH_SHORT).show()

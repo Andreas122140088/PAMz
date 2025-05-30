@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.hadiyarajesh.composetemplate"
-        minSdk = 21
+        minSdk = 23 // dinaikkan dari 21 ke 23 agar kompatibel dengan Firebase Auth
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -87,6 +87,8 @@ dependencies {
 
     // Add the dependencies for Firebase products you want to use
     implementation("com.google.firebase:firebase-analytics")
+    // Firebase Auth
+    implementation("com.google.firebase:firebase-auth-ktx")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

@@ -43,6 +43,8 @@ fun LoginScreen(
                 isLoading = false,
                 errorMessage = if (email.isEmpty() || password.isEmpty()) {
                     "Email and password cannot be empty"
+                } else if (email != "labtek1@gmail.com") {
+                    "Hanya akun labtek1@gmail.com yang diizinkan login"
                 } else {
                     onLoginSuccess(email, password)
                     null
