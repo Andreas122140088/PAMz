@@ -11,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,16 +26,16 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import android.widget.Toast
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun BarangTable(
@@ -98,17 +100,49 @@ fun BarangTable(
 
 @Composable
 fun CekBarangScreen() {
-    val barangFlow = remember { BarangRepository.listenBarangList() }
-    val barangList by barangFlow.collectAsState(initial = emptyList())
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val isAuthorized = currentUser?.email == "labtek1@gmail.com"
-    val filteredList = if (isAuthorized) {
-        barangList.filter { it.pengelolaId == currentUser?.email }
-    } else {
-        emptyList()
-    }
+    val viewModel: BarangViewModel = hiltViewModel()
+    val barangList by viewModel.barangList.collectAsState()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    // Gunakan state Compose untuk currentUser agar bisa trigger recomposition
+    val currentUserState = remember { mutableStateOf(FirebaseAuth.getInstance().currentUser) }
+    DisposableEffect(Unit) {
+        val auth = FirebaseAuth.getInstance()
+        val listener = FirebaseAuth.AuthStateListener { authListener ->
+            currentUserState.value = authListener.currentUser
+        }
+        auth.addAuthStateListener(listener)
+        onDispose { auth.removeAuthStateListener(listener) }
+    }
+    val currentUser = currentUserState.value
+
+    // Tambahkan debug Toast untuk melihat status currentUser
+    LaunchedEffect(currentUser) {
+        Toast.makeText(context, "currentUser: ${currentUser?.email ?: "null"}", Toast.LENGTH_LONG).show()
+    }
+
+    if (currentUser == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Silakan login terlebih dahulu.")
+        }
+        return
+    }
+
+    Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Text("User ID: ${currentUser.uid}", color = Color.Gray)
+        Text("Email: ${currentUser.email}", color = Color.Gray)
+    }
+
+    // Debug: Tampilkan jumlah barang yang diambil dari database
+    LaunchedEffect(barangList) {
+        Toast.makeText(context, "Jumlah barang: ${barangList.size}", Toast.LENGTH_SHORT).show()
+    }
+
+    // Semua user bisa melihat semua barang tanpa filter
+    val filteredList = barangList
+
+    // State untuk edit dan delete barang
     val barangToDeleteState = remember { mutableStateOf<com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab?>(null) }
     val barangToEditState = remember { mutableStateOf<com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab?>(null) }
     val barangToDelete = barangToDeleteState.value
@@ -116,13 +150,15 @@ fun CekBarangScreen() {
     val barangToEdit = barangToEditState.value
     val setBarangToEdit = { b: com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab? -> barangToEditState.value = b }
 
-    // Tambahkan notifikasi jika filteredList kosong karena pengelolaId tidak cocok
-    if (isAuthorized && barangList.isNotEmpty() && filteredList.isEmpty()) {
-        Toast.makeText(context, "Tidak ada barang dengan pengelolaId: ${currentUser?.email}", Toast.LENGTH_LONG).show()
-    }
+    // Tampilkan tabel barang
+    BarangTable(
+        barangList = filteredList,
+        onEdit = setBarangToEdit,
+        onDelete = setBarangToDelete
+    )
 
     // Dialog konfirmasi hapus
-    if (barangToDelete != null && isAuthorized) {
+    if (barangToDelete != null) {
         AlertDialog(
             onDismissRequest = { setBarangToDelete(null) },
             title = { Text("Konfirmasi Hapus") },
@@ -152,18 +188,12 @@ fun CekBarangScreen() {
     }
 
     // Dialog edit dengan form
-    if (barangToEdit != null && isAuthorized) {
-        // Gunakan rememberUpdatedState agar data edit selalu sinkron dengan barangToEdit terbaru
-        val namaState = rememberUpdatedState(barangToEdit.nama)
-        val kategoriState = rememberUpdatedState(barangToEdit.kategori)
-        val kondisiState = rememberUpdatedState(barangToEdit.kondisi)
-        val statusState = rememberUpdatedState(barangToEdit.status)
-        val tanggalMasukState = rememberUpdatedState(barangToEdit.tanggalMasuk)
-        var nama by remember { mutableStateOf(namaState.value) }
-        var kategori by remember { mutableStateOf(kategoriState.value) }
-        var kondisi by remember { mutableStateOf(kondisiState.value) }
-        var status by remember { mutableStateOf(statusState.value) }
-        var tanggalMasuk by remember { mutableStateOf(tanggalMasukState.value) }
+    if (barangToEdit != null) {
+        var nama by remember(barangToEdit) { mutableStateOf(barangToEdit.nama) }
+        var kategori by remember(barangToEdit) { mutableStateOf(barangToEdit.kategori) }
+        var kondisi by remember(barangToEdit) { mutableStateOf(barangToEdit.kondisi) }
+        var status by remember(barangToEdit) { mutableStateOf(barangToEdit.status) }
+
         AlertDialog(
             onDismissRequest = { setBarangToEdit(null) },
             title = { Text("Edit Barang") },
@@ -172,52 +202,39 @@ fun CekBarangScreen() {
                     OutlinedTextField(
                         value = nama,
                         onValueChange = { nama = it },
-                        label = { Text("Nama") },
-                        singleLine = true
+                        label = { Text("Nama Barang") }
                     )
                     OutlinedTextField(
                         value = kategori,
                         onValueChange = { kategori = it },
-                        label = { Text("Kategori") },
-                        singleLine = true
+                        label = { Text("Kategori") }
                     )
                     OutlinedTextField(
                         value = kondisi,
                         onValueChange = { kondisi = it },
-                        label = { Text("Kondisi") },
-                        singleLine = true
+                        label = { Text("Kondisi") }
                     )
                     OutlinedTextField(
                         value = status,
                         onValueChange = { status = it },
-                        label = { Text("Status") },
-                        singleLine = true
-                    )
-                    OutlinedTextField(
-                        value = tanggalMasuk,
-                        onValueChange = { tanggalMasuk = it },
-                        label = { Text("Tanggal Masuk") },
-                        singleLine = true
+                        label = { Text("Status") }
                     )
                 }
             },
             confirmButton = {
                 TextButton(onClick = {
                     coroutineScope.launch {
-                        Toast.makeText(context, "Memulai update id: ${barangToEdit.id}", Toast.LENGTH_SHORT).show()
                         try {
-                            BarangRepository.updateBarang(
-                                barangToEdit.copy(
-                                    nama = nama,
-                                    kategori = kategori,
-                                    kondisi = kondisi,
-                                    status = status,
-                                    tanggalMasuk = tanggalMasuk
-                                )
+                            val updatedBarang = barangToEdit.copy(
+                                nama = nama,
+                                kategori = kategori,
+                                kondisi = kondisi,
+                                status = status
                             )
-                            Toast.makeText(context, "Barang berhasil diupdate (id: ${barangToEdit.id})", Toast.LENGTH_SHORT).show()
+                            BarangRepository.updateBarang(updatedBarang)
+                            Toast.makeText(context, "Barang berhasil diupdate", Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
-                            Toast.makeText(context, "Gagal update barang: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Gagal update: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
                         }
                         setBarangToEdit(null)
                     }
@@ -232,44 +249,7 @@ fun CekBarangScreen() {
             }
         )
     }
-
-    BarangTable(
-        barangList = filteredList,
-        onEdit = setBarangToEdit,
-        onDelete = setBarangToDelete
-    )
-    if (!isAuthorized) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Anda tidak memiliki akses edit/hapus.", color = Color.Red)
-        }
-    }
 }
-
-//@Composable
-//fun StatusBadge(status: String, modifier: Modifier = Modifier) {
-//    Surface(
-//        modifier = modifier.padding(horizontal = 4.dp),
-//        shape = MaterialTheme.shapes.small,
-//        color = when (status) {
-//            "Aktif" -> Color(0xFF4CAF50).copy(alpha = 0.2f) // Hijau untuk Aktif
-//            "Nonaktif" -> Color(0xFFF44336).copy(alpha = 0.2f) // Merah untuk Nonaktif
-//            else -> MaterialTheme.colorScheme.surfaceVariant
-//        }
-//    ) {
-//        Text(
-//            text = status,
-//            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-//            style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.sp),
-//            color = when (status) {
-//                "Aktif" -> Color(0xFF4CAF50)
-//                "Nonaktif" -> Color(0xFFF44336)
-//                else -> MaterialTheme.colorScheme.onSurface
-//            },
-//            maxLines = 1,
-//            overflow = TextOverflow.Ellipsis
-//        )
-//    }
-//}
 
 @Preview(showBackground = true)
 @Composable

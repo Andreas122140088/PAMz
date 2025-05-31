@@ -34,6 +34,7 @@ import com.hadiyarajesh.composetemplate.ui.profile.ProfileData
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileScreen
 import com.hadiyarajesh.composetemplate.ui.login.LoginScreen
 import com.hadiyarajesh.composetemplate.ui.barang.BarangRepository
+import com.hadiyarajesh.composetemplate.ui.barang.CekBarangScreen
 import kotlinx.coroutines.flow.emptyFlow
 
 // Data class untuk state login
@@ -293,15 +294,12 @@ fun MainNavigation() {
                             )
                         },
                         content = { padding ->
-                            val barangList by BarangRepository.listenBarangList().collectAsState(initial = emptyList())
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(padding)
                             ) {
-                                BarangTable(
-                                    barangList = barangList
-                                )
+                                CekBarangScreen()
                             }
                         }
                     )

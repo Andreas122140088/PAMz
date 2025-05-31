@@ -38,6 +38,9 @@ object BarangRepository {
                 trySend(list)
             }
             override fun onCancelled(error: DatabaseError) {
+                // Tambahkan log/Toast untuk debug error
+                android.util.Log.e("BarangRepository", "Firebase error: ${error.message}")
+                trySend(emptyList()) // agar UI tidak loading terus
                 close(error.toException())
             }
         }
