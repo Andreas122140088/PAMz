@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hadiyarajesh.composetemplate.R
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 data class LoginState(
@@ -38,18 +39,21 @@ fun LoginScreen(
 
     LaunchedEffect(loginState.isLoading) {
         if (loginState.isLoading) {
-            delay(1000)
-            loginState = loginState.copy(
-                isLoading = false,
-                errorMessage = if (email.isEmpty() || password.isEmpty()) {
-                    "Email and password cannot be empty"
-                } else if (email != "labtek1@gmail.com") {
-                    "Hanya akun labtek1@gmail.com yang diizinkan login"
-                } else {
-                    onLoginSuccess(email, password)
-                    null
-                }
-            )
+            if (email.isEmpty() || password.isEmpty()) {
+                loginState = loginState.copy(isLoading = false, errorMessage = "Email and password cannot be empty")
+            } else {
+                // Proses login ke Firebase
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Login sukses, currentUser akan terisi
+                            loginState = loginState.copy(isLoading = false, errorMessage = null)
+                            onLoginSuccess(email, password)
+                        } else {
+                            loginState = loginState.copy(isLoading = false, errorMessage = task.exception?.localizedMessage ?: "Login gagal")
+                        }
+                    }
+            }
         }
     }
 

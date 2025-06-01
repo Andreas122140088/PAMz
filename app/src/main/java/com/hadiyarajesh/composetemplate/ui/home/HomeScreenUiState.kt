@@ -8,6 +8,6 @@ import com.hadiyarajesh.composetemplate.data.entity.Image
 internal sealed interface HomeScreenUiState {
     data object Initial : HomeScreenUiState
     data object Loading : HomeScreenUiState
-    data class Success(val data: Image) : HomeScreenUiState
+    data class Success(val data: Image, val kondisiStat: Map<String, Int>) : HomeScreenUiState
     data class Error(val msg: String) : HomeScreenUiState
 }

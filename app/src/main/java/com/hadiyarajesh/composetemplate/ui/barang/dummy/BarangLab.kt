@@ -8,5 +8,6 @@ data class BarangLab(
     val labtekId: String = "",
     val pengelolaId: String = "",
     val status: String = "",
-    val tanggalMasuk: String = ""
+    val tanggalMasuk: String = "",
+    val ownerUid: String = "" // UID pemilik barang
 )
