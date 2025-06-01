@@ -72,9 +72,10 @@ fun BarangTable(
                             Column(modifier = Modifier.padding(16.dp)) {
                                 Text(barang.nama, style = MaterialTheme.typography.titleMedium.copy(color = Color(0xFF000000), fontWeight = FontWeight.Bold))
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("Kategori: ${barang.kategori}", color = Color(0xFF000000))
-                                Text("Kondisi: ${barang.kondisi}", color = Color(0xFF000000))
-                                Text("Status: ${barang.status}", color = Color(0xFF000000))
+                                Text("Kategori: " + (barang.kategori.trim().ifBlank { "Tidak diketahui" }.replaceFirstChar { it.uppercase() }), color = Color(0xFF000000))
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("Kondisi: " + (barang.kondisi.trim().ifBlank { "Tidak diketahui" }.replaceFirstChar { it.uppercase() }), color = Color(0xFF000000))
+                                Text("Status: " + (barang.status.trim().ifBlank { "Tidak diketahui" }.replaceFirstChar { it.uppercase() }), color = Color(0xFF000000))
                                 Text("Tanggal Masuk: ${barang.tanggalMasuk}", color = Color(0xFF000000))
                                 Text("ID: ${barang.id}", color = Color.Gray, style = MaterialTheme.typography.bodySmall)
                                 Spacer(modifier = Modifier.height(8.dp))

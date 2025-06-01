@@ -41,8 +41,6 @@ fun LoginScreen(
         if (loginState.isLoading) {
             if (email.isEmpty() || password.isEmpty()) {
                 loginState = loginState.copy(isLoading = false, errorMessage = "Email and password cannot be empty")
-            } else if (email != "labtek1@gmail.com") {
-                loginState = loginState.copy(isLoading = false, errorMessage = "Hanya akun labtek1@gmail.com yang diizinkan login")
             } else {
                 // Proses login ke Firebase
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)

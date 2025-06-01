@@ -15,17 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-//import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 import com.google.firebase.auth.FirebaseAuth
 import com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +47,9 @@ fun TambahBarangScreen(
 
     // Format tanggal
     val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+    val viewModel: BarangViewModel = hiltViewModel()
+    val isLoading by viewModel.isTambahBarangLoading.collectAsState()
 
     Scaffold(
         topBar = {
@@ -274,7 +274,6 @@ fun TambahBarangScreen(
                             if (namaBarang.isNotBlank() && kategoriBarang.isNotBlank() && kondisiSelected != "Pilih Kondisi" && labtekId.isNotBlank() && pengelolaId.isNotBlank() && status.isNotBlank() && tanggalMasuk.isNotBlank()) {
                                 val currentUser = FirebaseAuth.getInstance().currentUser
                                 val pengelolaEmail = currentUser?.email ?: pengelolaId
-                                onSimpan(namaBarang, kategoriBarang, kondisiSelected, labtekId, pengelolaEmail, status, tanggalMasuk)
                                 val barang = BarangLab(
                                     nama = namaBarang,
                                     kategori = kategoriBarang,
@@ -282,16 +281,23 @@ fun TambahBarangScreen(
                                     labtekId = labtekId,
                                     pengelolaId = pengelolaEmail,
                                     status = status,
-                                    tanggalMasuk = tanggalMasuk
+                                    tanggalMasuk = tanggalMasuk,
+                                    ownerUid = currentUser?.uid ?: ""
                                 )
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    BarangRepository.tambahBarang(barang)
-                                }
-                                Toast.makeText(context, "Barang berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                                viewModel.tambahBarang(barang,
+                                    onSelesai = {
+                                        Toast.makeText(context, "Barang berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                                        // Reset form jika perlu
+                                    },
+                                    onError = { e ->
+                                        Toast.makeText(context, "Gagal menambah barang: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                    }
+                                )
                             } else {
-                                Toast.makeText(context, "Harap isi semua field", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Mohon lengkapi semua data", Toast.LENGTH_SHORT).show()
                             }
                         },
+                        enabled = !isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(52.dp), // Slightly taller button
@@ -301,11 +307,15 @@ fun TambahBarangScreen(
                             contentColor = Color.White
                         )
                     ) {
-                        Text(
-                            "Simpan",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold // Bolder text
-                        )
+                        if (isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        } else {
+                            Text(
+                                "Simpan",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold // Bolder text
+                            )
+                        }
                     }
                 }
             }

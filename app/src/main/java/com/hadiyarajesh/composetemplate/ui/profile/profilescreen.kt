@@ -36,7 +36,7 @@ fun ProfileScreen(profile: ProfileData) {
                 .fillMaxSize()
                 .background(Color(0xFFE3F2FD)) // Biru muda untuk background
                 .padding(innerPadding) // Tambahkan padding dari Scaffold agar konten tidak tertutup top bar
-        ) {
+        ) {7
             // Blue background curve agar serasi dengan top bar biru tua
             Box(
                 modifier = Modifier
