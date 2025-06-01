@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.hadiyarajesh.composetemplate"
-        minSdk = 21
+        minSdk = 23 // dinaikkan dari 21 ke 23 agar kompatibel dengan Firebase Auth
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -87,7 +87,8 @@ dependencies {
 
     // Add the dependencies for Firebase products you want to use
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-database-ktx")
+    // Firebase Auth
+    implementation("com.google.firebase:firebase-auth-ktx")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
@@ -114,7 +115,7 @@ dependencies {
     debugImplementation ("androidx.compose.ui:ui-tooling")
     implementation ("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.compose.material3:material3:1.1.0")
-
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
 }
 
 // Pass options to Room ksp processor

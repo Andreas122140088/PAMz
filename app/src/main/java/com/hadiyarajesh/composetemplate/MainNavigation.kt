@@ -8,8 +8,10 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +33,8 @@ import com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileData
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileScreen
 import com.hadiyarajesh.composetemplate.ui.login.LoginScreen
+import com.hadiyarajesh.composetemplate.ui.barang.BarangRepository
+import kotlinx.coroutines.flow.emptyFlow
 
 // Data class untuk state login
 data class LoginState(
@@ -50,17 +54,32 @@ fun AppBar(
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
-        title = { Text(title) },
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        },
         navigationIcon = {
-            if (showMenuIcon) { // Hanya tampilkan ikon menu jika showMenuIcon true
+            if (showMenuIcon) {
                 IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Toggle drawer")
+                    Icon(Icons.Default.Menu, contentDescription = "Toggle drawer", tint = Color.White)
                 }
             }
         },
         actions = {
-            // Tambahkan aksi lain jika diperlukan
-        }
+            IconButton(onClick = { navController.navigate("preview") }) {
+                Icon(Icons.Default.Visibility, contentDescription = "Preview", tint = Color(0xFF90CAF9)) // Biru muda untuk aksen
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(0xFF008FFD), // Biru tua untuk top bar
+            titleContentColor = Color.White
+        ),
+        modifier = modifier
     )
 }
 
@@ -73,24 +92,25 @@ fun DrawerContent(
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(
-        modifier = modifier.fillMaxHeight()
+        modifier = modifier.fillMaxHeight(),
+        drawerContainerColor = Color(0xFFE3F2FD) // Biru muda sangat terang
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFE3F2FD)) // Custom background color (light blue)
+                .background(Color(0xF7276BB4)) // Biru muda sangat terang
         ) {
             Column {
                 Spacer(Modifier.height(12.dp))
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                    icon = { Icon(Icons.Default.Home, contentDescription = "Home", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Home",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -103,35 +123,36 @@ fun DrawerContent(
                         }
                     }
                 )
+                // Hapus menu Profile dari drawer
+                // NavigationDrawerItem(
+                //     icon = { Icon(Icons.Default.Person, contentDescription = "Profile", tint = Color(0xFF42A5F5)) },
+                //     label = {
+                //         Text(
+                //             "Profile",
+                //             style = TextStyle(
+                //                 fontSize = 18.sp,
+                //                 fontWeight = FontWeight.Bold,
+                //                 color = Color(0xFFFFFFFF)
+                //             )
+                //         )
+                //     },
+                //     selected = navController.currentDestination?.route == "profile",
+                //     onClick = {
+                //         scope.launch { drawerState.close() }
+                //         navController.navigate("profile") {
+                //             launchSingleTop = true
+                //         }
+                //     }
+                // )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-                    label = {
-                        Text(
-                            "Profile",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black
-                            )
-                        )
-                    },
-                    selected = navController.currentDestination?.route == "profile",
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate("profile") {
-                            launchSingleTop = true
-                        }
-                    }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Cek barang") },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Cek barang", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Cek Barang",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -144,14 +165,14 @@ fun DrawerContent(
                     }
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Tambah barang") },
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Tambah barang", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Tambah Barang",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -164,14 +185,14 @@ fun DrawerContent(
                     }
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings", tint = Color(0xFF42A5F5)) },
                     label = {
                         Text(
                             "Settings",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color(0xFFFFFFFF)
                             )
                         )
                     },
@@ -273,13 +294,16 @@ fun MainNavigation() {
                             )
                         },
                         content = { padding ->
-                            BarangTable(
-                                barangList = listOf(
-                                    BarangLab("Laptop", "Elektronik", "Baik", "LT01", "PG01", "Aktif", "18/05/2025"),
-                                    BarangLab("Proyektor", "Elektronik", "Perlu Perbaikan", "LT02", "PG02", "Nonaktif", "10/04/2024"),
-                                    BarangLab("Meja", "Furnitur", "Baik", "LT03", "PG03", "Aktif", "05/03/2023")
+                            val barangList by BarangRepository.listenBarangList().collectAsState(initial = emptyList())
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(padding)
+                            ) {
+                                BarangTable(
+                                    barangList = barangList
                                 )
-                            )
+                            }
                         }
                     )
                 }
@@ -296,7 +320,13 @@ fun MainNavigation() {
                         },
                         content = { padding ->
                             TambahBarangScreen(
-                                onSimpan = { nama, kondisi, lokasi, labtekId, pengelolaId, status, tanggal -> }
+                                onSimpan = { nama, kategori, kondisi, labtekId, pengelolaId, status, tanggal ->
+                                    val barang = BarangLab(nama, kategori, kondisi, labtekId, pengelolaId, status, tanggal)
+                                    // Gunakan coroutineScope.launch, bukan LaunchedEffect (LaunchedEffect hanya untuk composable)
+                                    scope.launch {
+                                        BarangRepository.tambahBarang(barang)
+                                    }
+                                }
                             )
                         }
                     )
@@ -356,3 +386,21 @@ fun DrawerContentPreview() {
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun AppBarPreview() {
+    MaterialTheme {
+        val navController = rememberNavController()
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
+        val scope = rememberCoroutineScope()
+        AppBar(
+            title = "Preview AppBar",
+            navController = navController,
+            drawerState = drawerState,
+            scope = scope,
+            showMenuIcon = true
+        )
+    }
+}
+

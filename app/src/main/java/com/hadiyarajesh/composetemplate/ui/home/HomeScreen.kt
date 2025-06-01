@@ -1,11 +1,12 @@
 package com.hadiyarajesh.composetemplate.ui.home
 
 import android.widget.Toast
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,28 +15,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hadiyarajesh.composetemplate.R
@@ -43,84 +35,123 @@ import com.hadiyarajesh.composetemplate.data.entity.Image
 import com.hadiyarajesh.composetemplate.ui.components.ErrorItem
 import com.hadiyarajesh.composetemplate.ui.components.LoadingIndicator
 import com.hadiyarajesh.composetemplate.utility.Constants
-import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.Brush
-
-data class TrendData(val label: String, val values: List<Float>)
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 internal fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val homeScreenUiState by remember { viewModel.uiState }.collectAsStateWithLifecycle()
-
     HomeScreen(
-        uiState = homeScreenUiState,
+        uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
         loadData = { viewModel.loadData() }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 private fun HomeScreen(
     uiState: HomeScreenUiState,
     loadData: () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
+
     LaunchedEffect(Unit) {
         loadData()
+        systemUiController.setSystemBarsColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "HOME") }
-            )
-        }
-    )
-    { innerPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Latar belakang biru melengkung dan logo
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFE3F2FD), // Light blue
-                            Color(0xFFBBDEFB)  // Slightly darker blue
-                        )
-                    )
-                )
-                .padding(innerPadding)
+                .fillMaxWidth()
+                .height(220.dp)
+                .align(Alignment.TopCenter)
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        color = Color(0xF7276BB4),
+                        shape = RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp)
+                    )
+            )
+            // Lingkaran putih untuk membungkus logo, bagian bawah rata dengan box biru
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .align(Alignment.BottomCenter)
+                    // Hapus graphicsLayer agar lingkaran rata dengan box biru
+                    .background(color = Color.White, shape = RoundedCornerShape(60.dp)),
+                contentAlignment = Alignment.Center
             ) {
-                when (uiState) {
-                    is HomeScreenUiState.Initial -> {}
+                Image(
+                    painter = painterResource(id = R.drawable.erh),
+                    contentDescription = "Deskripsi aksesibilitas",
+                    modifier = Modifier.size(90.dp)
+                )
+                // Teks di bawah logo, bukan di dalam lingkaran
+            }
+        }
+        // Kolom untuk teks dan tombol
+        val context = LocalContext.current
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 220.dp), // Langsung di bawah box biru
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Selamat Datang di Aplikasi ERH",
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(top = 0.dp)
+            )
 
-                    is HomeScreenUiState.Loading -> {
-                        LoadingIndicator(modifier = Modifier.fillMaxSize())
-                    }
 
-                    is HomeScreenUiState.Success -> {
-                        HomeScreenContent(
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+        }
 
-                    is HomeScreenUiState.Error -> {
-                        ErrorItem(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                            text = uiState.msg
-                        )
+        Scaffold(
+            topBar = {}, // Remove title from AppBar
+            containerColor = Color.Transparent
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                    // Spacer agar teks turun di bawah box biru
+                    Spacer(modifier = Modifier.height(250.dp))
+                    when (uiState) {
+                        is HomeScreenUiState.Initial -> {}
+
+                        is HomeScreenUiState.Loading -> {
+                            LoadingIndicator(modifier = Modifier.fillMaxSize())
+                        }
+
+                        is HomeScreenUiState.Success -> {
+                            HomeScreenContent(
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        is HomeScreenUiState.Error -> {
+                            ErrorItem(
+                                modifier = Modifier
+                                    .padding(40.dp)
+                                    .fillMaxSize(),
+                                text = uiState.msg
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}
+
+
 
 @Composable
 private fun HomeScreenContent(
@@ -135,43 +166,17 @@ private fun HomeScreenContent(
     ) {
         // Top section: Image and Welcome Text
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 40.dp) // Turunkan agar rapi di bawah box biru
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.erh),
-                contentDescription = "Deskripsi aksesibilitas",
-                modifier = Modifier.size(150.dp)
-            )
-            Text(
-                text = "Selamat Datang di Aplikasi ERH",
-                style = MaterialTheme.typography.titleSmall
-            )
+
         }
-        // Bottom section: Logout Button
-        Button(
-            onClick = {
-                Toast.makeText(context, "Logging out", Toast.LENGTH_SHORT).show()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF4CAF50),
-                contentColor = Color.White
-            )
-        ) {
-            Text("Log Out")
-        }
+
     }
 }
-
-
 
 @Preview(showSystemUi = true)
 @Composable
