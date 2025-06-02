@@ -43,22 +43,33 @@ object BarangRepository {
             return@callbackFlow
         }
 
-        val query = db.orderByChild("ownerUid").equalTo(uid)
+        // UID admin hardcoded sesuai rules
+        val adminUid = "ImE5OKfoyiR8dAG0GxNgWTxDUJ12"
+        var barangListener: ValueEventListener? = null
+        var barangQuery: Query? = null
 
-        val listener = object : ValueEventListener {
+        if (uid == adminUid) {
+            // Admin: ambil semua barang
+            barangQuery = db
+        } else {
+            // User biasa: hanya barang miliknya
+            barangQuery = db.orderByChild("ownerUid").equalTo(uid)
+        }
+
+        barangListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = snapshot.children.mapNotNull { it.getValue(BarangLab::class.java) }
                 trySend(list)
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.e("BarangRepository", "Firebase error: ${error.message} (uid: $uid)")
                 trySend(emptyList())
-                close() // Jangan lempar exception agar aplikasi tidak crash
             }
         }
+        barangQuery.addValueEventListener(barangListener)
 
-        query.addValueEventListener(listener)
-        awaitClose { query.removeEventListener(listener) }
+        awaitClose {
+            barangListener?.let { barangQuery?.removeEventListener(it) }
+        }
     }
 }
