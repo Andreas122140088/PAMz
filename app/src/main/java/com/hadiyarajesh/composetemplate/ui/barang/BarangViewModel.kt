@@ -21,13 +21,8 @@ class BarangViewModel : ViewModel() {
     private fun listenBarangList() {
         viewModelScope.launch {
             BarangRepository.listenBarangList().collect { list ->
-                val currentUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
-                val filteredList = if (currentUid != null) {
-                    list.filter { it.ownerUid == currentUid }
-                } else {
-                    emptyList()
-                }
-                val fixedList = filteredList.map { barang ->
+                // Jangan filter ownerUid di sini, biarkan repository yang handle
+                val fixedList = list.map { barang ->
                     val kategoriKeywords = listOf("elektronik", "furnitur", "alat", "meja", "kursi", "proyektor", "laptop")
                     val kondisiKeywords = listOf("baik", "rusak", "perlu perbaikan", "bagus", "jelek")
                     val kategoriLower = barang.kategori.trim().lowercase()
