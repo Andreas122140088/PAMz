@@ -18,8 +18,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileScreen
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileData
 import androidx.compose.foundation.shape.RoundedCornerShape
-import com.google.firebase.auth.FirebaseAuth
-
 interface LogoutNavController {
     val onLogout: (() -> Unit)?
 }
@@ -33,18 +31,6 @@ fun SettingPage(
     val contextasd = LocalContext.current
 
     if (showProfile) {
-        val user = FirebaseAuth.getInstance().currentUser
-        val email = user?.email ?: ""
-        // Ambil nama sebelum '@', ganti angka di akhir dengan spasi dan angka
-        val usernameRaw = email.substringBefore("@")
-        val username = usernameRaw.replace(Regex("(\\D)(\\d+)$"), "$1 $2").replaceFirstChar { it.uppercase() }
-        // Ambil tanggal pembuatan akun dari metadata Firebase
-        val createdTimestamp = user?.metadata?.creationTimestamp ?: 0L
-        val joinDate = if (createdTimestamp > 0) {
-            java.text.SimpleDateFormat("dd MMM yyyy").format(java.util.Date(createdTimestamp))
-        } else {
-            "-"
-        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -52,11 +38,11 @@ fun SettingPage(
         ) {
             ProfileScreen(
                 profile = ProfileData(
-                    name = username,
-                    email = email,
+                    name = "Nama Pengguna",
+                    email = "user@email.com",
                     status = "Aktif",
                     role = "User",
-                    joinDate = joinDate
+                    joinDate = "01/01/2024"
                 )
             )
             IconButton(

@@ -1,24 +1,21 @@
 package com.hadiyarajesh.composetemplate.ui.barang
 
-import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.Flow
 
 object BarangRepository {
     private val db = FirebaseDatabase.getInstance().reference.child("barang")
 
     suspend fun tambahBarang(barang: BarangLab) {
         val newRef = db.push()
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val barangWithId = barang.copy(
-            id = newRef.key ?: "",
-            ownerUid = uid ?: ""
-        )
+        val barangWithId = barang.copy(id = newRef.key ?: "")
         newRef.setValue(barangWithId).await()
     }
 
@@ -35,30 +32,16 @@ object BarangRepository {
     }
 
     fun listenBarangList(): Flow<List<BarangLab>> = callbackFlow {
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
-        Log.d("BarangRepository", "listenBarangList() uid: $uid")
-        if (uid == null) {
-            trySend(emptyList())
-            close()
-            return@callbackFlow
-        }
-
-        val query = db.orderByChild("ownerUid").equalTo(uid)
-
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = snapshot.children.mapNotNull { it.getValue(BarangLab::class.java) }
                 trySend(list)
             }
-
             override fun onCancelled(error: DatabaseError) {
-                Log.e("BarangRepository", "Firebase error: ${error.message} (uid: $uid)")
-                trySend(emptyList())
-                close() // Jangan lempar exception agar aplikasi tidak crash
+                close(error.toException())
             }
         }
-
-        query.addValueEventListener(listener)
-        awaitClose { query.removeEventListener(listener) }
+        db.addValueEventListener(listener)
+        awaitClose { db.removeEventListener(listener) }
     }
 }
