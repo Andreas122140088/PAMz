@@ -34,6 +34,7 @@ import com.hadiyarajesh.composetemplate.ui.profile.ProfileData
 import com.hadiyarajesh.composetemplate.ui.profile.ProfileScreen
 import com.hadiyarajesh.composetemplate.ui.login.LoginScreen
 import com.hadiyarajesh.composetemplate.ui.barang.BarangRepository
+import com.hadiyarajesh.composetemplate.ui.barang.CekBarangScreen
 import kotlinx.coroutines.flow.emptyFlow
 
 // Data class untuk state login
@@ -123,27 +124,26 @@ fun DrawerContent(
                         }
                     }
                 )
-                // Hapus menu Profile dari drawer
-                // NavigationDrawerItem(
-                //     icon = { Icon(Icons.Default.Person, contentDescription = "Profile", tint = Color(0xFF42A5F5)) },
-                //     label = {
-                //         Text(
-                //             "Profile",
-                //             style = TextStyle(
-                //                 fontSize = 18.sp,
-                //                 fontWeight = FontWeight.Bold,
-                //                 color = Color(0xFFFFFFFF)
-                //             )
-                //         )
-                //     },
-                //     selected = navController.currentDestination?.route == "profile",
-                //     onClick = {
-                //         scope.launch { drawerState.close() }
-                //         navController.navigate("profile") {
-                //             launchSingleTop = true
-                //         }
-                //     }
-                // )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile", tint = Color(0xFF42A5F5)) },
+                    label = {
+                        Text(
+                            "Profile",
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFFFFFFFF)
+                            )
+                        )
+                    },
+                    selected = navController.currentDestination?.route == "profile",
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        navController.navigate("profile") {
+                            launchSingleTop = true
+                        }
+                    }
+                )
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Cek barang", tint = Color(0xFF42A5F5)) },
                     label = {
@@ -294,15 +294,12 @@ fun MainNavigation() {
                             )
                         },
                         content = { padding ->
-                            val barangList by BarangRepository.listenBarangList().collectAsState(initial = emptyList())
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(padding)
                             ) {
-                                BarangTable(
-                                    barangList = barangList
-                                )
+                                CekBarangScreen()
                             }
                         }
                     )

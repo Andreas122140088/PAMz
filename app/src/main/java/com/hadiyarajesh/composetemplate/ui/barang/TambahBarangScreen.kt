@@ -17,8 +17,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import com.google.firebase.auth.FirebaseAuth
+import com.hadiyarajesh.composetemplate.ui.barang.dummy.BarangLab
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,9 +38,7 @@ fun TambahBarangScreen(
     val kondisiOptions = listOf("Baik", "Perlu Perbaikan", "Rusak")
     var labtekId by remember { mutableStateOf("") }
     var pengelolaId by remember { mutableStateOf("") }
-    var statusExpanded by remember { mutableStateOf(false) }
-    var statusSelected by remember { mutableStateOf("Pilih Status") }
-    val statusOptions = listOf("Aktif", "Nonaktif")
+    var status by remember { mutableStateOf("") }
     var tanggalMasuk by remember { mutableStateOf("") }
 
     // State untuk DatePicker
@@ -46,8 +48,9 @@ fun TambahBarangScreen(
     // Format tanggal
     val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-    // Hilangkan isError dan border merah pada semua input
-    // Ganti background utama menjadi biru muda seperti SettingPage
+    val viewModel: BarangViewModel = hiltViewModel()
+    val isLoading by viewModel.isTambahBarangLoading.collectAsState()
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -60,14 +63,15 @@ fun TambahBarangScreen(
                 )
             )
         },
+
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFE3F2FD)) // Biru muda seperti SettingPage
+            .background(Color(0xFFF5F7FA)) // Softer background color
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFE3F2FD))
+                .background(Color(0xFFF5F7FA))
                 .padding(
                     top = innerPadding.calculateTopPadding(), // Respect TopAppBar
                     start = 16.dp,
@@ -75,16 +79,6 @@ fun TambahBarangScreen(
                     bottom = 16.dp
                 )
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Silakan isi data barang dengan lengkap",
-                    style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF1976D2)),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,8 +107,10 @@ fun TambahBarangScreen(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF1E88E5),
-                            unfocusedBorderColor = Color(0xFF757575)
-                        )
+                            unfocusedBorderColor = Color(0xFF757575),
+                            errorBorderColor = Color(0xFFF44336)
+                        ),
+                        isError = namaBarang.isBlank() && status.isNotBlank() // Error if empty after interaction
                     )
 
                     OutlinedTextField(
@@ -127,8 +123,10 @@ fun TambahBarangScreen(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF1E88E5),
-                            unfocusedBorderColor = Color(0xFF757575)
-                        )
+                            unfocusedBorderColor = Color(0xFF757575),
+                            errorBorderColor = Color(0xFFF44336)
+                        ),
+                        isError = kategoriBarang.isBlank() && status.isNotBlank()
                     )
 
                     ExposedDropdownMenuBox(
@@ -145,12 +143,15 @@ fun TambahBarangScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
+                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp))
+                                .menuAnchor(), // Tambahkan menuAnchor agar dropdown bisa dibuka
                             shape = RoundedCornerShape(8.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color(0xFF1E88E5),
-                                unfocusedBorderColor = Color(0xFF757575)
-                            )
+                                unfocusedBorderColor = Color(0xFF757575),
+                                errorBorderColor = Color(0xFFF44336)
+                            ),
+                            isError = kondisiSelected == "Pilih Kondisi" && status.isNotBlank()
                         )
                         ExposedDropdownMenu(
                             expanded = kondisiExpanded,
@@ -179,8 +180,10 @@ fun TambahBarangScreen(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF1E88E5),
-                            unfocusedBorderColor = Color(0xFF757575)
-                        )
+                            unfocusedBorderColor = Color(0xFF757575),
+                            errorBorderColor = Color(0xFFF44336)
+                        ),
+                        isError = labtekId.isBlank() && status.isNotBlank()
                     )
 
                     OutlinedTextField(
@@ -193,47 +196,27 @@ fun TambahBarangScreen(
                         shape = RoundedCornerShape(8.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF1E88E5),
-                            unfocusedBorderColor = Color(0xFF757575)
-                        )
+                            unfocusedBorderColor = Color(0xFF757575),
+                            errorBorderColor = Color(0xFFF44336)
+                        ),
+                        isError = pengelolaId.isBlank() && status.isNotBlank()
                     )
 
-                    ExposedDropdownMenuBox(
-                        expanded = statusExpanded,
-                        onExpandedChange = { statusExpanded = !statusExpanded }
-                    ) {
-                        OutlinedTextField(
-                            value = statusSelected,
-                            onValueChange = {},
-                            readOnly = true,
-                            label = { Text("Status") },
-                            trailingIcon = {
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF1E88E5),
-                                unfocusedBorderColor = Color(0xFF757575)
-                            )
-                        )
-                        ExposedDropdownMenu(
-                            expanded = statusExpanded,
-                            onDismissRequest = { statusExpanded = false },
-                            modifier = Modifier.background(Color.White)
-                        ) {
-                            statusOptions.forEach { opsi ->
-                                DropdownMenuItem(
-                                    text = { Text(opsi) },
-                                    onClick = {
-                                        statusSelected = opsi
-                                        statusExpanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
+                    OutlinedTextField(
+                        value = status,
+                        onValueChange = { status = it },
+                        label = { Text("Status") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFFF5F5F5), RoundedCornerShape(8.dp)),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF1E88E5),
+                            unfocusedBorderColor = Color(0xFF757575),
+                            errorBorderColor = Color(0xFFF44336)
+                        ),
+                        isError = status.isBlank() && namaBarang.isNotBlank()
+                    )
 
                     OutlinedTextField(
                         value = tanggalMasuk,
@@ -252,8 +235,10 @@ fun TambahBarangScreen(
                         },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF1E88E5),
-                            unfocusedBorderColor = Color(0xFF757575)
-                        )
+                            unfocusedBorderColor = Color(0xFF757575),
+                            errorBorderColor = Color(0xFFF44336)
+                        ),
+                        isError = tanggalMasuk.isBlank() && status.isNotBlank()
                     )
 
                     if (showDatePicker) {
@@ -276,7 +261,7 @@ fun TambahBarangScreen(
                                     Text("Cancel")
                                 }
                             },
-                            modifier = Modifier.background(Color(0xFFE3F2FD)) // Consistent dialog background
+                            modifier = Modifier.background(Color(0xFFF5F7FA)) // Consistent dialog background
                         ) {
                             DatePicker(state = datePickerState)
                         }
@@ -284,35 +269,53 @@ fun TambahBarangScreen(
 
                     Spacer(modifier = Modifier.height(24.dp)) // Increased spacing
 
-                    val isFormValid = namaBarang.isNotBlank() && kategoriBarang.isNotBlank() && kondisiSelected != "Pilih Kondisi" && labtekId.isNotBlank() && pengelolaId.isNotBlank() && statusSelected != "Pilih Status" && tanggalMasuk.isNotBlank()
                     Button(
                         onClick = {
-                            onSimpan(
-                                namaBarang,
-                                kategoriBarang,
-                                kondisiSelected,
-                                labtekId,
-                                pengelolaId,
-                                statusSelected,
-                                tanggalMasuk
-                            )
-                            Toast.makeText(context, "Barang berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-                            namaBarang = ""
-                            kategoriBarang = ""
-                            kondisiSelected = "Pilih Kondisi"
-                            labtekId = ""
-                            pengelolaId = ""
-                            statusSelected = "Pilih Status"
-                            tanggalMasuk = ""
+                            if (namaBarang.isNotBlank() && kategoriBarang.isNotBlank() && kondisiSelected != "Pilih Kondisi" && labtekId.isNotBlank() && pengelolaId.isNotBlank() && status.isNotBlank() && tanggalMasuk.isNotBlank()) {
+                                val currentUser = FirebaseAuth.getInstance().currentUser
+                                val pengelolaEmail = currentUser?.email ?: pengelolaId
+                                val barang = BarangLab(
+                                    nama = namaBarang,
+                                    kategori = kategoriBarang,
+                                    kondisi = kondisiSelected,
+                                    labtekId = labtekId,
+                                    pengelolaId = pengelolaEmail,
+                                    status = status,
+                                    tanggalMasuk = tanggalMasuk,
+                                    ownerUid = currentUser?.uid ?: ""
+                                )
+                                viewModel.tambahBarang(barang,
+                                    onSelesai = {
+                                        Toast.makeText(context, "Barang berhasil ditambahkan", Toast.LENGTH_SHORT).show()
+                                        // Reset form jika perlu
+                                    },
+                                    onError = { e ->
+                                        Toast.makeText(context, "Gagal menambah barang: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            } else {
+                                Toast.makeText(context, "Mohon lengkapi semua data", Toast.LENGTH_SHORT).show()
+                            }
                         },
-                        enabled = isFormValid,
+                        enabled = !isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp),
+                            .height(52.dp), // Slightly taller button
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF4CAF50),
+                            contentColor = Color.White
+                        )
                     ) {
-                        Text("Simpan", color = Color.White, fontWeight = FontWeight.Bold)
+                        if (isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+                        } else {
+                            Text(
+                                "Simpan",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold // Bolder text
+                            )
+                        }
                     }
                 }
             }
