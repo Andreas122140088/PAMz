@@ -124,26 +124,7 @@ fun DrawerContent(
                         }
                     }
                 )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile", tint = Color(0xFF42A5F5)) },
-                    label = {
-                        Text(
-                            "Profile",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFFFFFFFF)
-                            )
-                        )
-                    },
-                    selected = navController.currentDestination?.route == "profile",
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate("profile") {
-                            launchSingleTop = true
-                        }
-                    }
-                )
+                
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Person, contentDescription = "Cek barang", tint = Color(0xFF42A5F5)) },
                     label = {
@@ -255,30 +236,6 @@ fun MainNavigation() {
                         },
                         content = {
                             HomeRoute()
-                        }
-                    )
-                }
-                composable("profile") {
-                    Scaffold(
-                        topBar = {
-                            AppBar(
-                                title = "Profile",
-                                navController = navController,
-                                drawerState = drawerState,
-                                scope = scope,
-                                showMenuIcon = isLoggedIn
-                            )
-                        },
-                        content = { padding ->
-                            ProfileScreen(
-                                profile = ProfileData(
-                                    name = "John Doe",
-                                    email = "john.doe@example.com",
-                                    status = "Aktif",
-                                    role = "Administrator",
-                                    joinDate = "18 Mei 2025"
-                                )
-                            )
                         }
                     )
                 }
